@@ -12,6 +12,7 @@ import {
   FormLabel,
   FormMessage,
 } from "./ui/form";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   file: z.instanceof(FileList).optional(),
@@ -25,7 +26,11 @@ const FileInput = () => {
   const fileRef = form.register("file");
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log(data);
+    const file = data.file![0];
+    if (file && file.size > 10 * 1024 * 1024) {
+      toast("File is too big! Max 10MB.");
+      return;
+    }
   };
 
   return (
@@ -42,7 +47,12 @@ const FileInput = () => {
               <FormItem className="flex flex-col gap-2 mb-4">
                 <FormLabel>Upload your file</FormLabel>
                 <FormControl>
-                  <Input type="file" placeholder="shadcn" {...fileRef} />
+                  <Input
+                    type="file"
+                    placeholder="Select your file"
+                    accept="application/pdf"
+                    {...fileRef}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
