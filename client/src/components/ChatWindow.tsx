@@ -3,19 +3,39 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Bot, Send } from "lucide-react";
 import { ScrollArea } from "./ui/scroll-area";
+import { useChatStore } from "@/store/chat";
+import type React from "react";
+import { useFileStore } from "@/store/file";
+import { useAuthStore } from "@/store/auth";
 
 const ChatWindow = () => {
-  const messages = [];
-  const onSubmit = () => {};
+  const { logoutUser } = useAuthStore();
+  const { messages, addMessage } = useChatStore();
+  const { file } = useFileStore();
+
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const message = (
+      e.currentTarget.elements.namedItem("message") as HTMLInputElement
+    ).value;
+    addMessage({ sender: "user", message });
+    e.currentTarget.reset();
+  };
+
   return (
     <div className="flex flex-col h-screen w-full p-4">
-      <header className="shrink-0 w-full flex flex-row p-2 gap-4 items-center border-b border-stone-400 mb-2">
-        <Avatar className="w-10 h-10">
-          <AvatarFallback className="p-2 flex justify-center items-center">
-            <Bot />
-          </AvatarFallback>
-        </Avatar>
-        <p className="font-semibold">AI Assistant</p>
+      <header className="shrink-0 flex flex-row justify-between items-center w-full border-b border-stone-400 mb-2">
+        <div className="flex flex-row p-2 gap-4 items-center">
+          <Avatar className="w-10 h-10">
+            <AvatarFallback className="p-2 flex justify-center items-center">
+              <Bot />
+            </AvatarFallback>
+          </Avatar>
+          <p className="font-semibold">AI Assistant</p>
+        </div>
+        <Button variant="secondary" onClick={logoutUser}>
+          Log out
+        </Button>
       </header>
       <ScrollArea className="relative grow min-h-0 px-4 pb-4">
         {messages.length === 0 ? (
@@ -34,9 +54,16 @@ const ChatWindow = () => {
         <Input
           placeholder="Tell something..."
           type="text"
+          name="message"
           className="p-1 w-full border-none hover:outline-none focus:outline-none active:outline-none shadow-none"
+          disabled={!file}
         />
-        <Button variant="ghost" className="bg-transparent" size="icon">
+        <Button
+          variant="ghost"
+          className="bg-transparent"
+          size="icon"
+          disabled={!file}
+        >
           <Send />
         </Button>
       </form>

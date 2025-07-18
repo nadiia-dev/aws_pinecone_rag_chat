@@ -13,7 +13,6 @@ const Auth = () => {
     const userEmail = (
       e.currentTarget.elements.namedItem("email") as HTMLInputElement
     ).value;
-    console.log(userEmail);
     loginUser(userEmail);
     navigate("/chat");
   };
