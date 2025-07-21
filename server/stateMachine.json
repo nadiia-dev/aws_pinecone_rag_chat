@@ -1,0 +1,16 @@
+{
+  "Comment": "Parse and chunk document",
+  "StartAt": "ExtractText",
+  "States": {
+    "ExtractText": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:566006853930:function:extractText",
+      "Next": "ChunkText"
+    },
+    "ChunkText": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:566006853930:function:chunkText",
+      "End": true
+    }
+  }
+}

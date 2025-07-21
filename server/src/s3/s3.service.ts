@@ -1,12 +1,10 @@
 import {
   DeleteObjectCommand,
-  GetObjectCommand,
   HeadObjectCommand,
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
 import { Injectable } from '@nestjs/common';
-import { Readable } from 'stream';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { ConfigService } from '@nestjs/config';
 
@@ -52,22 +50,6 @@ export class S3Service {
     const command = new HeadObjectCommand({ Bucket: bucket, Key: key });
     const headData = await this.client.send(command);
     return headData.Metadata;
-  }
-
-  async getFile(bucket: string, key: string): Promise<Buffer> {
-    const command = new GetObjectCommand({ Bucket: bucket, Key: key });
-    const response = await this.client.send(command);
-
-    if (!response.Body || !(response.Body instanceof Readable)) {
-      throw new Error('Invalid S3 response body');
-    }
-
-    const chunks: Buffer[] = [];
-    for await (const chunk of response.Body as Readable) {
-      chunks.push(typeof chunk === 'string' ? Buffer.from(chunk) : chunk);
-    }
-
-    return Buffer.concat(chunks);
   }
 
   async deleteFile(bucket: string, key: string) {

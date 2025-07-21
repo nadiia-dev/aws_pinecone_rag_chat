@@ -2,6 +2,7 @@
 /dist
 /node_modules
 /build
+/functions/*/node_modules
 
 # Logs
 logs
@@ -58,3 +59,5 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 /generated/prisma
 
 /generated/prisma
+
+*.zip
