@@ -1,4 +1,75 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { PrismaService } from 'src/prisma.service';
+import { S3Service } from 'src/s3/s3.service';
+import { CreateFileDto } from './dto/files.dto';
+import { File } from './files.type';
 
 @Injectable()
-export class FilesService {}
+export class FilesService {
+  constructor(
+    private prisma: PrismaService,
+    private readonly s3: S3Service,
+    private readonly configService: ConfigService,
+  ) {}
+
+  async getUrl({
+    fileName,
+    fileType,
+    userEmail,
+  }: {
+    fileName: string;
+    fileType: string;
+    userEmail: string;
+  }): Promise<{ presignedUrl: string; key: string }> {
+    const timestamp = Date.now();
+    const key = `uploads/${timestamp}_${fileName}`;
+    const url = await this.s3.uploadFile(
+      this.configService.get<string>('S3_BUCKET')!,
+      key,
+      fileType,
+      userEmail,
+    );
+    return { presignedUrl: url, key };
+  }
+
+  async upload(documentData: CreateFileDto): Promise<File> {
+    return await this.prisma.file.create({
+      data: documentData,
+    });
+  }
+
+  async list(email: string): Promise<File> {
+    return (await this.prisma.file.findFirst({
+      where: { userEmail: email },
+    })) as File;
+  }
+
+  async delete(id: string) {
+    try {
+      const document = await this.prisma.file.findUnique({ where: { id } });
+
+      if (!document) {
+        throw new Error('Document not found');
+      }
+
+      const res = await this.s3.deleteFile(
+        this.configService.get<string>('S3_BUCKET')!,
+        document.s3Key,
+      );
+
+      const isSuccess =
+        res.DeleteMarker === true ||
+        res.$metadata?.httpStatusCode === 204 ||
+        res.$metadata?.httpStatusCode === 200;
+
+      if (!isSuccess) {
+        throw new Error('Failed to delete file from S3');
+      }
+      return await this.prisma.file.delete({ where: { id } });
+    } catch (e) {
+      console.error('Error while deleting file:', e);
+      throw new Error('Document deletion failed');
+    }
+  }
+}

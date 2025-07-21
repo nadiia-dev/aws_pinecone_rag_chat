@@ -2,7 +2,6 @@ import { useForm } from "react-hook-form";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-
 import z from "zod";
 import {
   Form,
@@ -13,23 +12,70 @@ import {
   FormMessage,
 } from "./ui/form";
 import { toast } from "sonner";
+import { generatePresignedUrl, uploadFile } from "@/api";
+import { useAuthStore } from "@/store/auth";
+import { useFileStore } from "@/store/file";
 
 const formSchema = z.object({
   file: z.instanceof(FileList).optional(),
 });
 
 const FileInput = () => {
+  const { file, fileData, setFileData, setFile } = useFileStore();
+  const { email } = useAuthStore();
+  const isDisabled = file ? true : false;
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
 
   const fileRef = form.register("file");
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const file = data.file![0];
+    if (!file) {
+      toast("No file selected!");
+      return;
+    }
+
     if (file && file.size > 10 * 1024 * 1024) {
       toast("File is too big! Max 10MB.");
       return;
+    }
+    try {
+      const presignedUrl = await generatePresignedUrl(
+        file.name,
+        file.type,
+        email
+      );
+      const url = `https://${import.meta.env.VITE_BUCKET}.s3.${
+        import.meta.env.VITE_REGION
+      }.amazonaws.com/${presignedUrl?.key}`;
+
+      setFileData({
+        presignedUrl: presignedUrl?.presignedUrl,
+        fileUrl: url,
+        key: presignedUrl?.key,
+      });
+
+      const uploadedFile = await uploadFile(
+        fileData.presignedUrl,
+        email!,
+        file,
+        fileData.key
+      );
+
+      if (uploadedFile) {
+        setFile(uploadedFile);
+        toast("File uploaded successfully!");
+      } else {
+        toast("Upload failed.");
+      }
+    } catch (e) {
+      if (e instanceof Error) {
+        console.error("Upload error:", e);
+        toast("Something went wrong during upload.");
+      }
     }
   };
 
@@ -37,7 +83,7 @@ const FileInput = () => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full p-4 md:p-6"
+        className="w-full py-4 md:py-6"
       >
         <FormField
           control={form.control}
@@ -59,7 +105,9 @@ const FileInput = () => {
             );
           }}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit" disabled={isDisabled}>
+          Submit
+        </Button>
       </form>
     </Form>
   );

@@ -1,16 +1,32 @@
-import { IsEmail, IsString, IsUrl } from 'class-validator';
+import { DocumentStatus } from '@prisma/client';
+import { Type } from 'class-transformer';
+import {
+  IsDate,
+  IsEmail,
+  IsEnum,
+  IsOptional,
+  IsString,
+  IsUrl,
+} from 'class-validator';
 
-export class CreateDocumentDto {
+export class CreateFileDto {
   @IsEmail()
   userEmail: string;
 
   @IsString()
-  filename: string;
-
-  @IsString()
-  objectKey: string;
+  fileName: string;
 
   @IsString()
   @IsUrl()
-  s3Url: string;
+  s3Key: string;
+
+  @IsOptional()
+  @IsString()
+  @IsEnum(DocumentStatus)
+  status?: DocumentStatus;
+
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  createdAt?: Date;
 }

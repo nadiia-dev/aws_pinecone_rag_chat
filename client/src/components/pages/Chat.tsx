@@ -1,16 +1,21 @@
-import { useFileStore } from "@/store/file";
+import { useAuthStore } from "@/store/auth";
 import ChatWindow from "../ChatWindow";
-import FileCard from "../FileCard";
-import FileInput from "../FileInput";
+import FileBlock from "../FileBlock";
+import { useEffect } from "react";
+import { useFileStore } from "@/store/file";
 
 const Chat = () => {
-  const { file } = useFileStore();
+  const { email } = useAuthStore();
+  const { fetchFile } = useFileStore();
+
+  useEffect(() => {
+    if (!email) return;
+    fetchFile(email);
+  }, [email, fetchFile]);
+
   return (
     <div className="flex flex-col xl:flex-row gap-4">
-      <aside className="w-full xl:w-[400px] divider">
-        {file && <FileCard file={file} />}
-        <FileInput />
-      </aside>
+      <FileBlock />
       <ChatWindow />
     </div>
   );
