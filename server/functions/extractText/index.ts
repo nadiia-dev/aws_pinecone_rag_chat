@@ -1,6 +1,7 @@
 import pdf from 'pdf-parse';
 import { Readable } from 'stream';
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
+import { S3Event } from 'aws-lambda';
 
 interface PdfParseResult {
   numpages: number;
@@ -29,7 +30,7 @@ const getFile = async (bucket: string, key: string): Promise<Buffer> => {
   return Buffer.concat(chunks);
 };
 
-export const handler = async (event) => {
+export const handler = async (event: S3Event) => {
   const record = event.Records[0];
   const bucket = record.s3.bucket.name;
   const key = decodeURIComponent(record.s3.object.key.replace(/\+/g, ' '));
@@ -41,11 +42,12 @@ export const handler = async (event) => {
     return {
       status: 'SUCCESS',
       text: parsed.text,
+      s3Key: key,
     };
-  } catch (err) {
+  } catch (e) {
     return {
       status: 'ERROR',
-      message: (err as Error).message,
+      message: (e as Error).message,
     };
   }
 };

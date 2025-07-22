@@ -1,5 +1,5 @@
 {
-  "name": "extracttext",
+  "name": "embedchunks",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -8,12 +8,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.848.0",
-    "pdf-parse": "^1.1.1"
+    "openai": "^5.10.2"
   },
-  "devDependencies": {
-    "@types/aws-lambda": "^8.10.152"
-  }
+  "devDependencies": {},
+  "description": ""
 }

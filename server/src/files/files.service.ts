@@ -4,6 +4,7 @@ import { PrismaService } from 'src/prisma.service';
 import { S3Service } from 'src/s3/s3.service';
 import { CreateFileDto } from './dto/files.dto';
 import { File } from './files.type';
+import { DocumentStatus } from '@prisma/client';
 
 @Injectable()
 export class FilesService {
@@ -71,5 +72,16 @@ export class FilesService {
       console.error('Error while deleting file:', e);
       throw new Error('Document deletion failed');
     }
+  }
+
+  async updateStatus(s3Key: string, status: DocumentStatus) {
+    const updatedDocument = await this.prisma.file.update({
+      where: { s3Key },
+      data: { status },
+    });
+    return {
+      message: 'Document status updated successfully',
+      status: updatedDocument.status,
+    };
   }
 }

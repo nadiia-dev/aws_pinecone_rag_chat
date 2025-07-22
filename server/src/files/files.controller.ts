@@ -4,11 +4,13 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
 import { FilesService } from './files.service';
 import { CreateFileDto } from './dto/files.dto';
+import { DocumentStatus } from 'generated/prisma';
 
 @Controller('files')
 export class FilesController {
@@ -34,5 +36,10 @@ export class FilesController {
   @Delete('/:id')
   deleteFile(@Param('id') id: string) {
     return this.filesService.delete(id);
+  }
+
+  @Patch('/update')
+  updateFileStatus(@Body() body: { s3Key: string; status: DocumentStatus }) {
+    return this.filesService.updateStatus(body.s3Key, body.status);
   }
 }

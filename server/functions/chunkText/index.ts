@@ -1,14 +1,32 @@
-export const handler = (event: { text: string }) => {
-  const { text } = event;
+export const handler = async (event: { text: string; s3Key: string }) => {
+  const { text, s3Key } = event;
 
-  if (!text) throw new Error('No text received');
+  try {
+    if (!text) {
+      return {
+        status: 'ERROR',
+        error: 'No text received',
+        s3Key,
+      };
+    }
 
-  const firstWord = text.trim().split(/\s+/)[0];
+    const chunkSize = 1000;
+    const chunks = [];
 
-  console.log('First word:', firstWord);
+    for (let i = 0; i < text.length; i += chunkSize) {
+      chunks.push(text.slice(i, i + chunkSize));
+    }
 
-  return {
-    status: 'SUCCESS',
-    chunkPreview: firstWord,
-  };
+    return {
+      status: 'SUCCESS',
+      s3Key,
+      chunks,
+    };
+  } catch (error) {
+    return {
+      status: 'ERROR',
+      error: (error as Error).message,
+      s3Key,
+    };
+  }
 };

@@ -5,11 +5,60 @@
     "ExtractText": {
       "Type": "Task",
       "Resource": "arn:aws:lambda:us-east-1:566006853930:function:extractText",
-      "Next": "ChunkText"
+      "Next": "ChunkText",
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "UpdateStatusError"
+        }
+      ]
     },
     "ChunkText": {
       "Type": "Task",
       "Resource": "arn:aws:lambda:us-east-1:566006853930:function:chunkText",
+      "Next": "EmbedChunks",
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "UpdateStatusError"
+        }
+      ]
+    },
+    "EmbedChunks": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:566006853930:function:embedChunks",
+      "Next": "IndexChunks"
+    },
+    "IndexChunks": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:566006853930:function:indexChunks",
+      "Next": "CheckIfSuccess",
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "UpdateStatusError"
+        }
+      ]
+    },
+    "CheckIfSuccess": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.status",
+          "StringEquals": "SUCCESS",
+          "Next": "UpdateStatusSuccess"
+        }
+      ],
+      "Default": "UpdateStatusError"
+    },
+    "UpdateStatusSuccess": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:region:account-id:function:updateStatusSuccess",
+      "End": true
+    },
+    "UpdateStatusError": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:region:account-id:function:updateStatusError",
       "End": true
     }
   }

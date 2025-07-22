@@ -23,7 +23,7 @@ model File {
   id        String           @id @default(uuid())
   userEmail String
   fileName  String
-  s3Key     String
+  s3Key     String           @unique
   status    DocumentStatus   @default(PENDING)
   createdAt DateTime         @default(now())
 }
