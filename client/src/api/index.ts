@@ -7,6 +7,7 @@ export const uploadFile = async (
   key: string
 ) => {
   try {
+    console.log(presignedUrl);
     const res = await fetch(presignedUrl, {
       method: "PUT",
       body: file,
@@ -72,8 +73,19 @@ export const listFiles = async (email: string) => {
         },
       }
     );
-    const data = await res.json();
-    return data;
+    if (!res.ok) {
+      const text = await res.text();
+      toast(`Non-OK response: ${res.status}, ${text} `);
+    }
+
+    const contentLength = res.headers.get("Content-Length");
+    const isEmpty = res.status === 204 || contentLength === "0";
+
+    if (isEmpty) {
+      return null;
+    }
+
+    return await res.json();
   } catch (e) {
     if (e instanceof Error) {
       toast.error(e.message);

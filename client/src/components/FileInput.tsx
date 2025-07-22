@@ -31,14 +31,13 @@ const FileInput = () => {
 
   const fileRef = form.register("file");
 
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    const file = data.file![0];
+  const onFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (!file) {
       toast("No file selected!");
       return;
     }
-
-    if (file && file.size > 10 * 1024 * 1024) {
+    if (file.size > 10 * 1024 * 1024) {
       toast("File is too big! Max 10MB.");
       return;
     }
@@ -51,12 +50,32 @@ const FileInput = () => {
       const url = `https://${import.meta.env.VITE_BUCKET}.s3.${
         import.meta.env.VITE_REGION
       }.amazonaws.com/${presignedUrl?.key}`;
-
       setFileData({
-        presignedUrl: presignedUrl?.presignedUrl,
+        presignedUrl: presignedUrl.presignedUrl,
         fileUrl: url,
-        key: presignedUrl?.key,
+        key: presignedUrl.key,
       });
+    } catch (e) {
+      if (e instanceof Error) {
+        toast("Failed to get upload URL");
+      }
+    }
+  };
+
+  const onSubmit = async () => {
+    if (!fileData.presignedUrl || !fileData.key) {
+      toast("No presigned URL available. Please select a file first.");
+      return;
+    }
+    try {
+      const fileInput = document.querySelector(
+        'input[type="file"]'
+      ) as HTMLInputElement;
+      const file = fileInput?.files?.[0];
+      if (!file) {
+        toast("No file selected!");
+        return;
+      }
 
       const uploadedFile = await uploadFile(
         fileData.presignedUrl,
@@ -73,7 +92,6 @@ const FileInput = () => {
       }
     } catch (e) {
       if (e instanceof Error) {
-        console.error("Upload error:", e);
         toast("Something went wrong during upload.");
       }
     }
@@ -98,6 +116,7 @@ const FileInput = () => {
                     placeholder="Select your file"
                     accept="application/pdf"
                     {...fileRef}
+                    onChange={(e) => onFileChange(e)}
                   />
                 </FormControl>
                 <FormMessage />

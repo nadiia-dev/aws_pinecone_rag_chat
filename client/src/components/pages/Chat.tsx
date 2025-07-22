@@ -10,7 +10,21 @@ const Chat = () => {
 
   useEffect(() => {
     if (!email) return;
-    fetchFile(email);
+
+    const fetchData = async () => {
+      try {
+        const result = await fetchFile(email);
+        if (!result || result.length === 0) {
+          return;
+        }
+      } catch (err) {
+        if (err instanceof Error) {
+          console.log(err);
+        }
+      }
+    };
+
+    fetchData();
   }, [email, fetchFile]);
 
   return (

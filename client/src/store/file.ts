@@ -13,7 +13,7 @@ type FileStore = {
   fileData: FileDataType;
   setFileData: (fileDate: FileDataType) => void;
   setFile: (file: FileItem) => void;
-  fetchFile: (email: string) => Promise<void>;
+  fetchFile: (email: string) => Promise<FileItem[] | null>;
   clearFile: (id: string) => Promise<void>;
   loading: boolean;
 };
@@ -29,8 +29,15 @@ export const useFileStore = create<FileStore>((set) => ({
   setFile: (file) => set({ file }),
   fetchFile: async (email: string) => {
     set({ loading: true });
-    const data = await listFiles(email);
-    set({ file: data, loading: false });
+    try {
+      const data = await listFiles(email);
+      set({ file: data, loading: false });
+      return data;
+    } catch (err) {
+      set({ loading: false });
+      console.warn("Failed to fetch file:", err);
+      return null;
+    }
   },
   clearFile: async (id: string) => {
     await deleteFile(id);
