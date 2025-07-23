@@ -7,11 +7,30 @@ import { useChatStore } from "@/store/chat";
 import type React from "react";
 import { useFileStore } from "@/store/file";
 import { useAuthStore } from "@/store/auth";
+import { useQuery } from "@tanstack/react-query";
+import { fetchStatus } from "@/api";
+import { useEffect, useState } from "react";
 
 const ChatWindow = () => {
   const { logoutUser } = useAuthStore();
   const { messages, addMessage } = useChatStore();
   const { file } = useFileStore();
+  const [enabled, setEnabled] = useState(true);
+
+  const fileId = file?.id;
+  const { data } = useQuery({
+    queryKey: ["fileStatus", fileId],
+    queryFn: () => fetchStatus(fileId!),
+    refetchInterval: 2000,
+    refetchIntervalInBackground: true,
+    enabled: enabled && !!file,
+  });
+
+  useEffect(() => {
+    if (data === "SUCCESS") {
+      setEnabled(false);
+    }
+  }, [data]);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -21,6 +40,8 @@ const ChatWindow = () => {
     addMessage({ sender: "user", message });
     e.currentTarget.reset();
   };
+
+  const isDisabled = data !== "SUCCESS";
 
   return (
     <div className="flex flex-col h-screen w-full p-4">
@@ -56,13 +77,13 @@ const ChatWindow = () => {
           type="text"
           name="message"
           className="p-1 w-full border-none hover:outline-none focus:outline-none active:outline-none shadow-none"
-          disabled={!file}
+          disabled={isDisabled}
         />
         <Button
           variant="ghost"
           className="bg-transparent"
           size="icon"
-          disabled={!file}
+          disabled={isDisabled}
         >
           <Send />
         </Button>

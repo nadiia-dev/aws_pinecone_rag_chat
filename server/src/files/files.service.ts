@@ -97,4 +97,9 @@ export class FilesService {
       status: updatedDocument.status,
     };
   }
+
+  async getStatus(id: string): Promise<string | null> {
+    const file = await this.prisma.file.findFirst({ where: { id } });
+    return file ? file.status : null;
+  }
 }

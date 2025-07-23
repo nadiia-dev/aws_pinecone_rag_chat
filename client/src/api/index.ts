@@ -109,3 +109,47 @@ export const deleteFile = async (id: string) => {
     }
   }
 };
+
+export const fetchStatus = async (id: string) => {
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/files/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (!res.ok) {
+      toast(`Request failed with status ${res.status}`);
+      return null;
+    }
+    const data = await res.text();
+    return data;
+  } catch (e) {
+    if (e instanceof Error) {
+      toast.error(e.message);
+    }
+  }
+};
+
+export const sendMessage = async (sender: string, message: string) => {
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/messages/send`, {
+      method: "POST",
+      body: JSON.stringify({ sender, message }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error(`Error status: ${res.status}`);
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (e) {
+    if (e instanceof Error) {
+      toast.error(e.message);
+    }
+  }
+};

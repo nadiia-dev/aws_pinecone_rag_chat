@@ -1,6 +1,6 @@
+import { create } from "zustand";
 import { deleteFile, listFiles } from "@/api";
 import type { FileItem } from "@/types";
-import { create } from "zustand";
 
 type FileDataType = {
   presignedUrl: string;

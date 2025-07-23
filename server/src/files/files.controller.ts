@@ -42,4 +42,9 @@ export class FilesController {
   updateFileStatus(@Body() body: { s3Key: string; status: DocumentStatus }) {
     return this.filesService.updateStatus(body.s3Key, body.status);
   }
+
+  @Get('/:id')
+  getFileStatus(@Param(':id') id: string) {
+    return this.filesService.getStatus(id);
+  }
 }
