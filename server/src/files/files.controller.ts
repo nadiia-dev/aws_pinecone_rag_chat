@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { FilesService } from './files.service';
 import { CreateFileDto } from './dto/files.dto';
-import { DocumentStatus } from 'generated/prisma';
+import { DocumentStatus } from '@prisma/client';
 
 @Controller('files')
 export class FilesController {
