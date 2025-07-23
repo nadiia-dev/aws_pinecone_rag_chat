@@ -5,6 +5,20 @@
     "ExtractText": {
       "Type": "Task",
       "Resource": "arn:aws:lambda:us-east-1:566006853930:function:extractText",
+      "Parameters": {
+        "Records": [
+          {
+            "s3": {
+              "bucket": {
+                "name.$": "$.detail.bucket.name"
+              },
+              "object": {
+                "key.$": "$.detail.object.key"
+              }
+            }
+          }
+        ]
+      },
       "Next": "ChunkText",
       "Catch": [
         {

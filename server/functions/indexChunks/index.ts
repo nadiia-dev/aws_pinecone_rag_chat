@@ -16,8 +16,6 @@ export const handler = async (event: {
     metadata: { s3Key, chunkIndex: i },
   }));
 
-  await index.upsert(vectors);
-
   try {
     await index.upsert(vectors);
     return { s3Key, status: 'SUCCESS', inserted: vectors.length };

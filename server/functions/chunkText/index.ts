@@ -11,7 +11,7 @@ export const handler = async (event: { text: string; s3Key: string }) => {
     }
 
     const chunkSize = 1000;
-    const chunks = [];
+    const chunks: string[] = [];
 
     for (let i = 0; i < text.length; i += chunkSize) {
       chunks.push(text.slice(i, i + chunkSize));
