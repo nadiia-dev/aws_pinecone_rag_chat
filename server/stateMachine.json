@@ -1,5 +1,5 @@
 {
-  "Comment": "Parse and chunk document",
+  "Comment": "Get file embeddings add index them to pinecone",
   "StartAt": "ExtractText",
   "States": {
     "ExtractText": {
@@ -67,12 +67,12 @@
     },
     "UpdateStatusSuccess": {
       "Type": "Task",
-      "Resource": "arn:aws:lambda:region:account-id:function:updateStatusSuccess",
+      "Resource": "arn:aws:lambda:us-east-1:566006853930:function:updateStatusSuccess",
       "End": true
     },
     "UpdateStatusError": {
       "Type": "Task",
-      "Resource": "arn:aws:lambda:region:account-id:function:updateStatusError",
+      "Resource": "arn:aws:lambda:us-east-1:566006853930:function:updateStatusError",
       "End": true
     }
   }

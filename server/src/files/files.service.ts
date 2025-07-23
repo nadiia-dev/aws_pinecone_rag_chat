@@ -5,6 +5,7 @@ import { S3Service } from 'src/s3/s3.service';
 import { CreateFileDto } from './dto/files.dto';
 import { File } from './files.type';
 import { DocumentStatus } from '@prisma/client';
+import { PineconeService } from 'src/pinecone/pinecone.service';
 
 @Injectable()
 export class FilesService {
@@ -12,6 +13,7 @@ export class FilesService {
     private prisma: PrismaService,
     private readonly s3: S3Service,
     private readonly configService: ConfigService,
+    private readonly pineconeService: PineconeService,
   ) {}
 
   async getUrl({
@@ -67,6 +69,17 @@ export class FilesService {
       if (!isSuccess) {
         throw new Error('Failed to delete file from S3');
       }
+
+      const embeddingsRes = await this.pineconeService.deleteEmbeddingsByS3Key(
+        document.s3Key,
+      );
+
+      if (embeddingsRes.status === 'error') {
+        throw new Error(
+          `Failed to delete file embeddings from Pinecone db: ${embeddingsRes.message}`,
+        );
+      }
+
       return await this.prisma.file.delete({ where: { id } });
     } catch (e) {
       console.error('Error while deleting file:', e);

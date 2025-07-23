@@ -4,6 +4,8 @@ import { ConfigModule } from '@nestjs/config';
 import { AppService } from './app.service';
 import { FilesModule } from './files/files.module';
 import { S3Module } from './s3/s3.module';
+import { PineconeService } from './pinecone/pinecone.service';
+import { PineconeModule } from './pinecone/pinecone.module';
 
 @Module({
   imports: [
@@ -12,8 +14,9 @@ import { S3Module } from './s3/s3.module';
     }),
     FilesModule,
     S3Module,
+    PineconeModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, PineconeService],
 })
 export class AppModule {}
