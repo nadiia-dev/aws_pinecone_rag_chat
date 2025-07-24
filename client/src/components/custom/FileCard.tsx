@@ -18,11 +18,17 @@ const FileCard = ({ file }: { file: FileItem }) => {
       <h3 className="text-lg font-medium mb-4">Uploaded File</h3>
       <div className="flex gap-2 items-center justify-between p-4 bg-stone-100 border rounded-xl border-stone-400">
         <div className="text-sm">
-          <FileCheck2 />
-          <p className="text-black">{file.fileName}</p>
-          <p>
-            <strong>Uploaded at:</strong> {formatDate(file.createdAt!)}
-          </p>
+          <div className="flex gap-2 items-center">
+            <FileCheck2 className="w-6 h-6" />
+            <div>
+              <p className="text-black">
+                <strong>Name:</strong> {file.fileName}
+              </p>
+              <p>
+                <strong>Uploaded at:</strong> {formatDate(file.createdAt!)}
+              </p>
+            </div>
+          </div>
         </div>
         <Button
           variant="destructive"

@@ -15,7 +15,7 @@ import Message from "./Message";
 const ChatWindow = () => {
   const { logoutUser } = useAuthStore();
   const { messages, addMessage } = useChatStore();
-  const { file, curFileKey } = useFileStore();
+  const { curFileKey } = useFileStore();
   const [enabled, setEnabled] = useState(true);
 
   const { data } = useQuery({
@@ -23,7 +23,7 @@ const ChatWindow = () => {
     queryFn: () => fetchStatus(curFileKey!),
     refetchInterval: 2000,
     refetchIntervalInBackground: true,
-    enabled: enabled && !!file && !!curFileKey,
+    enabled: enabled && !!curFileKey,
   });
 
   useEffect(() => {
