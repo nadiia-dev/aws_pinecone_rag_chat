@@ -1,15 +1,15 @@
-import { Avatar, AvatarFallback } from "./ui/avatar";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Bot, Send } from "lucide-react";
-import { ScrollArea } from "./ui/scroll-area";
-import { useChatStore } from "@/store/chat";
+import { useEffect, useState } from "react";
 import type React from "react";
+import { Bot, Send } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { Avatar, AvatarFallback } from "../ui/avatar";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { ScrollArea } from "../ui/scroll-area";
+import { useChatStore } from "@/store/chat";
 import { useFileStore } from "@/store/file";
 import { useAuthStore } from "@/store/auth";
-import { useQuery } from "@tanstack/react-query";
 import { fetchStatus } from "@/api";
-import { useEffect, useState } from "react";
 import Message from "./Message";
 
 const ChatWindow = () => {
@@ -64,13 +64,15 @@ const ChatWindow = () => {
             Start a conversation
           </p>
         ) : (
-          messages.map((message, idx) => (
-            <Message
-              key={idx}
-              text={message.message}
-              isMine={message.sender === "user"}
-            />
-          ))
+          <div>
+            {messages.map((message, idx) => (
+              <Message
+                key={idx}
+                text={message.message}
+                isMine={message.sender === "user"}
+              />
+            ))}
+          </div>
         )}
       </ScrollArea>
 

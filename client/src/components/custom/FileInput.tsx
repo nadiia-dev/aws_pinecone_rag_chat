@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import {
@@ -10,7 +10,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "./ui/form";
+} from "../ui/form";
 import { toast } from "sonner";
 import { generatePresignedUrl, uploadFile } from "@/api";
 import { useAuthStore } from "@/store/auth";

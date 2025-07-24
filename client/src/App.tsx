@@ -1,11 +1,11 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Auth from "./components/pages/Auth";
-import Chat from "./components/pages/Chat";
-import ProtectedRoute from "./components/ProtectedRoute";
-import PublicRoute from "./components/PublicRoute";
+import Auth from "./pages/Auth";
+import Chat from "./pages/Chat";
+import ProtectedRoute from "./components/custom/ProtectedRoute";
+import PublicRoute from "./components/custom/PublicRoute";
 import { Toaster } from "sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import Error from "./components/pages/Error";
+import Error from "./pages/Error";
 
 function App() {
   const queryClient = new QueryClient();

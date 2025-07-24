@@ -1,12 +1,18 @@
 import { cn } from "@/lib/utils";
+import { useChatStore } from "@/store/chat";
+import TypingDots from "./TypingDots";
 
 const Message = ({
   text,
   isMine = false,
 }: {
-  text: string;
+  text?: string;
   isMine?: boolean;
 }) => {
+  const { typing } = useChatStore();
+  const shouldShowTyping = typing && !isMine;
+  console.log(shouldShowTyping);
+
   return (
     <div
       className={cn(
@@ -22,7 +28,7 @@ const Message = ({
             : "bg-muted text-muted-foreground rounded-bl-sm"
         )}
       >
-        {text}
+        {shouldShowTyping ? <TypingDots /> : text}
       </div>
     </div>
   );

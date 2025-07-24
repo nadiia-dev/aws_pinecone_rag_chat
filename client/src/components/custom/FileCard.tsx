@@ -1,13 +1,16 @@
 import type { FileItem } from "@/types";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { Trash2 } from "lucide-react";
 import { formatDate } from "@/lib/formatDate";
 import { useFileStore } from "@/store/file";
+import { useChatStore } from "@/store/chat";
 
 const FileCard = ({ file }: { file: FileItem }) => {
   const { clearFile } = useFileStore();
+  const { clearChat } = useChatStore();
   const onRemove = (s3Key: string) => {
     clearFile(s3Key);
+    clearChat();
   };
 
   return (

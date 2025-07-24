@@ -30,6 +30,7 @@ export class DynamoDbService {
     const itemToPut = {
       ...item,
       status: item.status ?? 'PENDING',
+      createdAt: new Date().toISOString(),
     };
     await this.client.send(
       new PutCommand({
@@ -59,7 +60,6 @@ export class DynamoDbService {
   }
 
   async updateStatus(s3Key: string, status: DocumentStatusType) {
-    console.log('Updating status', { s3Key, status });
     const res = await this.client.send(
       new UpdateCommand({
         TableName: this.tableName,
@@ -75,7 +75,6 @@ export class DynamoDbService {
       }),
     );
 
-    console.log(res.Attributes);
     return res.Attributes;
   }
 

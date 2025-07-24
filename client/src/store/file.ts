@@ -39,7 +39,6 @@ export const useFileStore = create<FileStore>()(
       fetchFile: async () => {
         const key = get().curFileKey;
         if (!key) return null;
-        console.log(key);
         set({ loading: true });
         try {
           const data = await listFiles(key);

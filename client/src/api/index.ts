@@ -72,7 +72,7 @@ export const listFiles = async (s3Key: string) => {
     );
     if (!res.ok) {
       const text = await res.text();
-      toast(`Non-OK response: ${res.status}, ${text} `);
+      toast.error(`Non-OK response: ${res.status}, ${text} `);
     }
 
     const contentLength = res.headers.get("Content-Length");
@@ -116,7 +116,7 @@ export const fetchStatus = async (s3Key: string) => {
       },
     });
     if (!res.ok) {
-      toast(`Request failed with status ${res.status}`);
+      toast.error(`Request failed with status ${res.status}`);
       return null;
     }
     const data = await res.text();

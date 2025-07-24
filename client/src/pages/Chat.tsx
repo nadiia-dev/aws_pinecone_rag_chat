@@ -1,6 +1,6 @@
 import { useAuthStore } from "@/store/auth";
-import ChatWindow from "../ChatWindow";
-import FileBlock from "../FileBlock";
+import ChatWindow from "../components/custom/ChatWindow";
+import FileBlock from "../components/custom/FileBlock";
 import { useEffect } from "react";
 import { useFileStore } from "@/store/file";
 
