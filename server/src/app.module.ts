@@ -15,6 +15,7 @@ import { DynamoDbModule } from './dynamo-db/dynamo-db.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: '.env',
     }),
     FilesModule,
     S3Module,
