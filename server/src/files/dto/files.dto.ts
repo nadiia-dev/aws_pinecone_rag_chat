@@ -1,13 +1,6 @@
-import { DocumentStatus } from '@prisma/client';
 import { Type } from 'class-transformer';
-import {
-  IsDate,
-  IsEmail,
-  IsEnum,
-  IsOptional,
-  IsString,
-  IsUrl,
-} from 'class-validator';
+import { IsDate, IsEmail, IsOptional, IsString, IsUrl } from 'class-validator';
+import { DocumentStatusType } from 'src/common/types/files.type';
 
 export class CreateFileDto {
   @IsEmail()
@@ -22,8 +15,7 @@ export class CreateFileDto {
 
   @IsOptional()
   @IsString()
-  @IsEnum(DocumentStatus)
-  status?: DocumentStatus;
+  status?: DocumentStatusType;
 
   @IsOptional()
   @Type(() => Date)

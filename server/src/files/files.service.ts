@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { S3Service } from 'src/s3/s3.service';
 import { CreateFileDto } from './dto/files.dto';
-import { DocumentStatus } from '@prisma/client';
+import { DocumentStatusType } from '../common/types/files.type';
 import { PineconeService } from 'src/pinecone/pinecone.service';
 import { DynamoDbService } from 'src/dynamo-db/dynamo-db.service';
 
@@ -75,11 +75,11 @@ export class FilesService {
     }
   }
 
-  async updateStatus(s3Key: string, status: DocumentStatus) {
+  async updateStatus(s3Key: string, status: DocumentStatusType) {
     const updatedDocument = await this.dynamoDb.updateStatus(s3Key, status);
     return {
       message: 'Document status updated successfully',
-      status: updatedDocument?.status,
+      status: updatedDocument?.status as DocumentStatusType,
     };
   }
 
