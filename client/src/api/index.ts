@@ -145,7 +145,7 @@ export const sendMessage = async (sender: string, message: string) => {
       throw new Error(`Error status: ${res.status}`);
     }
 
-    const data = await res.json();
+    const data = await res.text();
     return data;
   } catch (e) {
     if (e instanceof Error) {

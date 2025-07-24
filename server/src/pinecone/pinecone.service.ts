@@ -5,7 +5,11 @@ import { Pinecone, Index } from '@pinecone-database/pinecone';
 @Injectable()
 export class PineconeService {
   private readonly index: Index;
-  private readonly ns;
+  private thresholdMap: { [maxChunks: number]: number } = {
+    5: 0.1,
+    20: 0.4,
+    Infinity: 0.7,
+  };
 
   constructor(private readonly configService: ConfigService) {
     const pinecone = new Pinecone({
@@ -15,26 +19,33 @@ export class PineconeService {
     this.index = pinecone.Index(
       this.configService.get<string>('PINECONE_INDEX')!,
     );
+  }
 
-    this.ns = this.index.namespace(
-      this.configService.get<string>('PINECONE_NAMESPACE')!,
-    );
+  getThreshold(numChunks: number): number {
+    for (const maxChunksStr of Object.keys(this.thresholdMap)) {
+      const maxChunks = Number(maxChunksStr);
+      if (numChunks <= maxChunks) {
+        return this.thresholdMap[maxChunks];
+      }
+    }
+    return 0.7;
   }
 
   async querySimilarVectors(
     embedding: number[],
   ): Promise<{ metadata: any; score: number }[]> {
     try {
-      const result = await this.ns.query({
+      const result = await this.index.query({
         topK: 5,
         vector: embedding,
         includeMetadata: true,
       });
 
       const matches = result.matches || [];
+      const threshold = this.getThreshold(matches.length);
 
       return matches
-        .filter((match) => match.score && match.score > 0.7)
+        .filter((match) => match.score && match.score > threshold)
         .map((match) => ({
           metadata: match.metadata,
           score: match.score!,
@@ -47,7 +58,7 @@ export class PineconeService {
 
   async deleteEmbeddingsByS3Key(s3Key: string) {
     try {
-      await this.ns.deleteAll();
+      await this.index.deleteAll();
 
       return { status: 'success', message: `Embeddings for ${s3Key} deleted.` };
     } catch (error) {

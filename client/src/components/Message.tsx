@@ -9,7 +9,10 @@ const Message = ({
 }) => {
   return (
     <div
-      className={cn("w-full flex", isMine ? "justify-end" : "justify-start")}
+      className={cn(
+        "w-full flex mb-2",
+        isMine ? "justify-end" : "justify-start"
+      )}
     >
       <div
         className={cn(
