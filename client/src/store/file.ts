@@ -11,6 +11,7 @@ type FileDataType = {
 
 type FileStore = {
   file: FileItem | null;
+  setFile: (file: FileItem) => void;
   fileData: FileDataType;
   curFileKey: string;
   setFileData: (fileDate: FileDataType) => void;
@@ -30,6 +31,7 @@ export const useFileStore = create<FileStore>()(
       },
       curFileKey: "",
       loading: false,
+      setFile: (file) => set({ file }),
       setFileData: (fileData) => {
         set({ fileData });
         if (fileData.key) {
@@ -51,8 +53,8 @@ export const useFileStore = create<FileStore>()(
         }
       },
       clearFile: async (s3Key: string) => {
-        await deleteFile(s3Key);
         set({ file: null, loading: false, curFileKey: "" });
+        await deleteFile(s3Key);
       },
     }),
     {

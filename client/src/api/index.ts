@@ -28,7 +28,7 @@ export const uploadFile = async (
     if (!apiRes.ok) throw new Error("Failed to save metadata");
 
     toast.success("File was uploaded successfully!");
-    return;
+    return await apiRes.json();
   } catch (e) {
     if (e instanceof Error) toast.error(e.message);
   }

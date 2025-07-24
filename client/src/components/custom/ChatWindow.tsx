@@ -23,11 +23,11 @@ const ChatWindow = () => {
     queryFn: () => fetchStatus(curFileKey!),
     refetchInterval: 2000,
     refetchIntervalInBackground: true,
-    enabled: enabled && !!file,
+    enabled: enabled && !!file && !!curFileKey,
   });
 
   useEffect(() => {
-    if (data === "SUCCESS") {
+    if (data && data === "SUCCESS") {
       setEnabled(false);
     }
   }, [data]);
@@ -60,8 +60,10 @@ const ChatWindow = () => {
       </header>
       <ScrollArea className="relative grow min-h-0 px-4 pb-4">
         {messages.length === 0 ? (
-          <p className="text-stone-400 absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2">
-            Start a conversation
+          <p className="text-center text-stone-400 absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2">
+            {isDisabled
+              ? "Please upload the file and wait while we process it. Once it`s ready, you`ll be able to start chatting."
+              : "Start a conversation"}
           </p>
         ) : (
           <div>

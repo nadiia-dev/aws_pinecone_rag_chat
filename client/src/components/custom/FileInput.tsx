@@ -21,7 +21,7 @@ const formSchema = z.object({
 });
 
 const FileInput = () => {
-  const { file, fileData, setFileData } = useFileStore();
+  const { file, setFile, fileData, setFileData } = useFileStore();
   const { email } = useAuthStore();
   const isDisabled = file ? true : false;
 
@@ -77,10 +77,18 @@ const FileInput = () => {
         return;
       }
 
-      await uploadFile(fileData.presignedUrl, email!, file, fileData.key);
+      const uploadedFile = await uploadFile(
+        fileData.presignedUrl,
+        email!,
+        file,
+        fileData.key
+      );
+      if (uploadedFile) {
+        setFile(uploadedFile);
+      }
     } catch (e) {
       if (e instanceof Error) {
-        toast("Something went wrong during upload.");
+        toast.error("Something went wrong during upload.");
       }
     }
   };
