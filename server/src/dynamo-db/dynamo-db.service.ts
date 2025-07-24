@@ -17,6 +17,10 @@ export class DynamoDbService {
   constructor(private readonly configService: ConfigService) {
     this.client = new DynamoDBClient({
       region: this.configService.get<string>('AWS_REGION'),
+      credentials: {
+        accessKeyId: this.configService.get<string>('ACCESS_KEY_ID')!,
+        secretAccessKey: this.configService.get<string>('SECRET_ACCESS_KEY')!,
+      },
     });
 
     this.tableName = this.configService.get<string>('DYNAMODB_TABLE_NAME')!;
