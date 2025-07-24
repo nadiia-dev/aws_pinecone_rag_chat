@@ -7,7 +7,7 @@ type ChatMessage = {
   message: string;
 };
 
-type WithThinking = ChatMessage & {
+export type WithThinking = ChatMessage & {
   isThinking?: boolean;
 };
 
@@ -35,9 +35,16 @@ export const useChatStore = create<ChatStore>((set) => ({
 
       set((state) => {
         const messages = [...state.messages];
-        const lastThinkingIndex = messages.findIndex(
-          (m) => m.sender === "bot" && (m as WithThinking).isThinking
-        );
+        let lastThinkingIndex = -1;
+        for (let i = messages.length - 1; i >= 0; i--) {
+          if (
+            messages[i].sender === "bot" &&
+            (messages[i] as WithThinking).isThinking
+          ) {
+            lastThinkingIndex = i;
+            break;
+          }
+        }
 
         if (lastThinkingIndex !== -1) {
           messages[lastThinkingIndex] = { sender: "bot", message: res! };

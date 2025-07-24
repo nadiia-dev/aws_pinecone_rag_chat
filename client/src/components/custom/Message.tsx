@@ -1,16 +1,16 @@
 import { cn } from "@/lib/utils";
-import { useChatStore } from "@/store/chat";
 import TypingDots from "./TypingDots";
 
 const Message = ({
   text,
   isMine = false,
+  isThinking = false,
 }: {
   text?: string;
   isMine?: boolean;
+  isThinking?: boolean;
 }) => {
-  const { typing } = useChatStore();
-  const shouldShowTyping = typing && !isMine;
+  const shouldShowTyping = isThinking && !isMine;
 
   return (
     <div

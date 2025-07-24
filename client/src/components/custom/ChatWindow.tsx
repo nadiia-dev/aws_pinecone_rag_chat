@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { ScrollArea } from "../ui/scroll-area";
-import { useChatStore } from "@/store/chat";
+import { useChatStore, type WithThinking } from "@/store/chat";
 import { useFileStore } from "@/store/file";
 import { useAuthStore } from "@/store/auth";
 import { fetchStatus } from "@/api";
@@ -66,15 +66,14 @@ const ChatWindow = () => {
               : "Start a conversation"}
           </p>
         ) : (
-          <div>
-            {messages.map((message, idx) => (
-              <Message
-                key={idx}
-                text={message.message}
-                isMine={message.sender === "user"}
-              />
-            ))}
-          </div>
+          messages.map((msg, index) => (
+            <Message
+              key={index}
+              text={msg.message}
+              isMine={msg.sender === "user"}
+              isThinking={(msg as WithThinking).isThinking || false}
+            />
+          ))
         )}
       </ScrollArea>
 
