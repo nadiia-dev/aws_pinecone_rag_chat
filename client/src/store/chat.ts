@@ -22,11 +22,10 @@ export const useChatStore = create<ChatStore>((set) => ({
   messages: [],
   addMessage: async (msg: ChatMessage) => {
     try {
-      set((state) => ({ messages: [...state.messages, msg], typing: false }));
-
       set((state) => ({
         messages: [
           ...state.messages,
+          msg,
           { sender: "bot", message: "", isThinking: true } as WithThinking,
         ],
         typing: true,

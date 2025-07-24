@@ -11,7 +11,6 @@ const Message = ({
 }) => {
   const { typing } = useChatStore();
   const shouldShowTyping = typing && !isMine;
-  console.log(shouldShowTyping);
 
   return (
     <div
