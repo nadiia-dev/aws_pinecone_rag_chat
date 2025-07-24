@@ -15,13 +15,12 @@ import Message from "./Message";
 const ChatWindow = () => {
   const { logoutUser } = useAuthStore();
   const { messages, addMessage } = useChatStore();
-  const { file } = useFileStore();
+  const { file, curFileKey } = useFileStore();
   const [enabled, setEnabled] = useState(true);
 
-  const fileId = file?.id;
   const { data } = useQuery({
-    queryKey: ["fileStatus", fileId],
-    queryFn: () => fetchStatus(fileId!),
+    queryKey: ["fileStatus", curFileKey],
+    queryFn: () => fetchStatus(curFileKey!),
     refetchInterval: 2000,
     refetchIntervalInBackground: true,
     enabled: enabled && !!file,

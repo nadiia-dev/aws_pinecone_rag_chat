@@ -1,8 +1,6 @@
-import { DocumentStatus } from '@prisma/client';
+export type DocumentStatusType = 'PENDING' | 'SUCCESS' | 'ERROR';
 
-type DocumentStatusType = DocumentStatus;
-
-export type File = {
+export type FileType = {
   id: string;
   userEmail: string;
   fileName: string;

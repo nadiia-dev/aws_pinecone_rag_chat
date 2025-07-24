@@ -20,7 +20,9 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.848.0",
     "@aws-sdk/client-s3": "^3.848.0",
+    "@aws-sdk/lib-dynamodb": "^3.850.0",
     "@aws-sdk/s3-request-presigner": "^3.848.0",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",

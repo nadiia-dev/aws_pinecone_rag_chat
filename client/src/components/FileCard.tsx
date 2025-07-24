@@ -6,8 +6,8 @@ import { useFileStore } from "@/store/file";
 
 const FileCard = ({ file }: { file: FileItem }) => {
   const { clearFile } = useFileStore();
-  const onRemove = (id: string) => {
-    clearFile(id);
+  const onRemove = (s3Key: string) => {
+    clearFile(s3Key);
   };
 
   return (
@@ -25,7 +25,7 @@ const FileCard = ({ file }: { file: FileItem }) => {
         <Button
           variant="destructive"
           size="sm"
-          onClick={() => onRemove(file.id)}
+          onClick={() => onRemove(file.s3Key)}
         >
           <Trash2 />
         </Button>

@@ -13,7 +13,7 @@ const Chat = () => {
 
     const fetchData = async () => {
       try {
-        const result = await fetchFile(email);
+        const result = await fetchFile();
         if (!result || result.length === 0) {
           return;
         }

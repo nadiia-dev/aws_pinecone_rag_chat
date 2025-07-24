@@ -8,6 +8,8 @@ import { PineconeService } from './pinecone/pinecone.service';
 import { PineconeModule } from './pinecone/pinecone.module';
 import { MessagesModule } from './messages/messages.module';
 import { OpenaiModule } from './openai/openai.module';
+import { DynamoDbService } from './dynamo-db/dynamo-db.service';
+import { DynamoDbModule } from './dynamo-db/dynamo-db.module';
 
 @Module({
   imports: [
@@ -19,8 +21,9 @@ import { OpenaiModule } from './openai/openai.module';
     PineconeModule,
     MessagesModule,
     OpenaiModule,
+    DynamoDbModule,
   ],
   controllers: [AppController],
-  providers: [AppService, PineconeService],
+  providers: [AppService, PineconeService, DynamoDbService],
 })
 export class AppModule {}

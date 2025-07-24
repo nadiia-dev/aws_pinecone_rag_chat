@@ -6,11 +6,10 @@ import {
   Param,
   Patch,
   Post,
-  Query,
 } from '@nestjs/common';
 import { FilesService } from './files.service';
 import { CreateFileDto } from './dto/files.dto';
-import { DocumentStatus } from '@prisma/client';
+import { DocumentStatusType } from '../common/types/files.type';
 
 @Controller('files')
 export class FilesController {
@@ -28,23 +27,25 @@ export class FilesController {
     return this.filesService.upload(fileData);
   }
 
-  @Get()
-  getFiles(@Query() query: { email: string }) {
-    return this.filesService.list(query.email);
+  @Get('/uploaded/:s3Key')
+  getFiles(@Param('s3Key') s3Key: string) {
+    return this.filesService.list(s3Key);
   }
 
-  @Delete('/:id')
-  deleteFile(@Param('id') id: string) {
-    return this.filesService.delete(id);
+  @Delete('/:s3Key')
+  deleteFile(@Param('s3Key') s3Key: string) {
+    return this.filesService.delete(s3Key);
   }
 
   @Patch('/update')
-  updateFileStatus(@Body() body: { s3Key: string; status: DocumentStatus }) {
+  updateFileStatus(
+    @Body() body: { s3Key: string; status: DocumentStatusType },
+  ) {
     return this.filesService.updateStatus(body.s3Key, body.status);
   }
 
-  @Get('/:id')
-  getFileStatus(@Param(':id') id: string) {
-    return this.filesService.getStatus(id);
+  @Get('/:s3Key')
+  getFileStatus(@Param('s3Key') s3Key: string) {
+    return this.filesService.getStatus(s3Key);
   }
 }

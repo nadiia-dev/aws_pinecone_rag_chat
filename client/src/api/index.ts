@@ -7,7 +7,6 @@ export const uploadFile = async (
   key: string
 ) => {
   try {
-    console.log(presignedUrl);
     const res = await fetch(presignedUrl, {
       method: "PUT",
       body: file,
@@ -28,12 +27,10 @@ export const uploadFile = async (
 
     if (!apiRes.ok) throw new Error("Failed to save metadata");
 
-    const newFile = await apiRes.json();
     toast.success("File was uploaded successfully!");
-    return newFile;
+    return;
   } catch (e) {
     if (e instanceof Error) toast.error(e.message);
-    return null;
   }
 };
 
@@ -62,10 +59,10 @@ export const generatePresignedUrl = async (
   }
 };
 
-export const listFiles = async (email: string) => {
+export const listFiles = async (s3Key: string) => {
   try {
     const res = await fetch(
-      `${import.meta.env.VITE_API_URL}/files?email=${email}`,
+      `${import.meta.env.VITE_API_URL}/files/uploaded/${s3Key}`,
       {
         method: "GET",
         headers: {
@@ -93,9 +90,9 @@ export const listFiles = async (email: string) => {
   }
 };
 
-export const deleteFile = async (id: string) => {
+export const deleteFile = async (s3Key: string) => {
   try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/files/${id}`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/files/${s3Key}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -110,9 +107,9 @@ export const deleteFile = async (id: string) => {
   }
 };
 
-export const fetchStatus = async (id: string) => {
+export const fetchStatus = async (s3Key: string) => {
   try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/files/${id}`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/files/${s3Key}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
