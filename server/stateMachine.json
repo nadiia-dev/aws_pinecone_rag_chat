@@ -30,7 +30,7 @@
     "ChunkText": {
       "Type": "Task",
       "Resource": "arn:aws:lambda:us-east-1:566006853930:function:chunkText",
-      "Next": "EmbedChunks",
+      "Next": "EmbedAndIndexChunks",
       "Catch": [
         {
           "ErrorEquals": ["States.ALL"],
@@ -38,14 +38,9 @@
         }
       ]
     },
-    "EmbedChunks": {
+    "EmbedAndIndexChunks": {
       "Type": "Task",
-      "Resource": "arn:aws:lambda:us-east-1:566006853930:function:embedChunks",
-      "Next": "IndexChunks"
-    },
-    "IndexChunks": {
-      "Type": "Task",
-      "Resource": "arn:aws:lambda:us-east-1:566006853930:function:indexChunks",
+      "Resource": "arn:aws:lambda:us-east-1:566006853930:function:embedAndIndexChunks",
       "Next": "CheckIfSuccess",
       "Catch": [
         {

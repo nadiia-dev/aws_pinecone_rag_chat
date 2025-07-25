@@ -1,8 +1,13 @@
 import OpenAI from "openai";
+import { Pinecone } from "@pinecone-database/pinecone";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
+
+const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY! });
+
+const index = pinecone.Index("my-index");
 
 async function getEmbedding(text: string): Promise<number[] | null> {
   try {
@@ -18,6 +23,26 @@ async function getEmbedding(text: string): Promise<number[] | null> {
   }
 }
 
+async function indexChunks(
+  s3Key: string,
+  embeddings: number[][],
+  chunks: string[]
+) {
+  const vectors = embeddings.map((embedding, i) => ({
+    id: `${s3Key}-chunk-${i}`,
+    values: embedding,
+    metadata: { s3Key, chunkIndex: i, text: chunks[i] },
+  }));
+
+  try {
+    await index.upsert(vectors);
+    return { s3Key, status: "SUCCESS", inserted: vectors.length };
+  } catch (e) {
+    console.error("Pinecone upsert error:", e);
+    return { s3Key, status: "ERROR", error: (e as Error).message };
+  }
+}
+
 export const handler = async (event: { s3Key: string; chunks: string[] }) => {
   const { s3Key, chunks } = event;
 
@@ -28,7 +53,7 @@ export const handler = async (event: { s3Key: string; chunks: string[] }) => {
 
     const hasNulls = embeddings.some((emb) => emb === null);
 
-    if (hasNulls) {
+    if (hasNulls || embeddings.some((e) => !Array.isArray(e))) {
       return {
         status: "ERROR",
         s3Key,
@@ -36,11 +61,15 @@ export const handler = async (event: { s3Key: string; chunks: string[] }) => {
       };
     }
 
+    const result = await indexChunks(s3Key, embeddings as number[][], chunks);
+
+    if (result.status === "ERROR") {
+      return result;
+    }
+
     return {
       status: "SUCCESS",
       s3Key,
-      embeddings: embeddings as number[][],
-      chunks,
     };
   } catch (error) {
     return {

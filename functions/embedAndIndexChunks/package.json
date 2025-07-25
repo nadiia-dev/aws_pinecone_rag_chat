@@ -1,5 +1,5 @@
 {
-  "name": "indexchunks",
+  "name": "embedchunks",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -8,8 +8,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
-    "@pinecone-database/pinecone": "^6.1.1"
-  }
+    "@pinecone-database/pinecone": "^6.1.2",
+    "openai": "^5.10.2"
+  },
+  "description": ""
 }
