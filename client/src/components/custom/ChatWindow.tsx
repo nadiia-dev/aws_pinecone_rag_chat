@@ -11,7 +11,6 @@ import { useFileStore } from "@/store/file";
 import { useAuthStore } from "@/store/auth";
 import { fetchStatus } from "@/api";
 import Message from "./Message";
-import Spinner from "./Spinner";
 import StatusBanner from "./StatusBanner";
 
 const ChatWindow = () => {
@@ -62,11 +61,7 @@ const ChatWindow = () => {
         </Button>
       </header>
       <ScrollArea className="relative grow min-h-0 px-4 pb-4">
-        {isDisabled ? (
-          <div className="flex justify-center items-center h-full">
-            <Spinner />
-          </div>
-        ) : messages.length === 0 ? (
+        {messages.length === 0 ? (
           <StatusBanner />
         ) : (
           messages.map((msg, index) => (

@@ -63,12 +63,12 @@ const FileInput = () => {
   };
 
   const onSubmit = async () => {
-    setStatus("UPLOADING");
     if (!fileData.presignedUrl || !fileData.key) {
       toast("No presigned URL available. Please select a file first.");
       return;
     }
     try {
+      setStatus("UPLOADING");
       const fileInput = document.querySelector(
         'input[type="file"]'
       ) as HTMLInputElement;
