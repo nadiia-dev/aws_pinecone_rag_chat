@@ -9,12 +9,7 @@ type FileDataType = {
   key: string;
 };
 
-export type StatusType =
-  | "IDLE"
-  | "UPLOADING"
-  | "PROCESSING"
-  | "READY"
-  | "ERROR";
+export type StatusType = "IDLE" | "PROCESSING" | "READY" | "ERROR";
 
 type FileStore = {
   file: FileItem | null;

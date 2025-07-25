@@ -68,7 +68,7 @@ const FileInput = () => {
       return;
     }
     try {
-      setStatus("UPLOADING");
+      setStatus("PROCESSING");
       const fileInput = document.querySelector(
         'input[type="file"]'
       ) as HTMLInputElement;

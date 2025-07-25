@@ -7,7 +7,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { ScrollArea } from "../ui/scroll-area";
 import { useChatStore, type WithThinking } from "@/store/chat";
-import { useFileStore } from "@/store/file";
+import { useFileStore, type StatusType } from "@/store/file";
 import { useAuthStore } from "@/store/auth";
 import { fetchStatus } from "@/api";
 import Message from "./Message";
@@ -28,8 +28,18 @@ const ChatWindow = () => {
   });
 
   useEffect(() => {
-    if (data && data === "SUCCESS") {
-      setStatus("READY");
+    if (!data) return;
+
+    const statusMap: Record<string, StatusType> = {
+      PENDING: "PROCESSING",
+      SUCCESS: "READY",
+      ERROR: "ERROR",
+    };
+
+    const mapped = statusMap[data] ?? "ERROR";
+    setStatus(mapped);
+
+    if (data === "SUCCESS") {
       setEnabled(false);
     }
   }, [data, setStatus]);

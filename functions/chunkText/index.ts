@@ -4,27 +4,35 @@ export const handler = async (event: { text: string; s3Key: string }) => {
   try {
     if (!text) {
       return {
-        status: 'ERROR',
-        error: 'No text received',
+        status: "ERROR",
+        error: "No text received",
         s3Key,
       };
     }
 
-    const chunkSize = 1000;
+    const sentences = text.split(/(?<=[.?!])\s+/);
     const chunks: string[] = [];
 
-    for (let i = 0; i < text.length; i += chunkSize) {
-      chunks.push(text.slice(i, i + chunkSize));
+    let currentChunk = "";
+
+    for (const sentence of sentences) {
+      if ((currentChunk + sentence).length > 1000) {
+        chunks.push(currentChunk.trim());
+        currentChunk = sentence;
+      } else {
+        currentChunk += " " + sentence;
+      }
     }
+    if (currentChunk) chunks.push(currentChunk.trim());
 
     return {
-      status: 'SUCCESS',
+      status: "SUCCESS",
       s3Key,
       chunks,
     };
   } catch (error) {
     return {
-      status: 'ERROR',
+      status: "ERROR",
       error: (error as Error).message,
       s3Key,
     };

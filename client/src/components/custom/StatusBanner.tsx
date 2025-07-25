@@ -1,13 +1,15 @@
 import { useFileStore, type StatusType } from "@/store/file";
 import Spinner from "./Spinner";
-import type { ReactElement } from "react";
+import { useEffect, type ReactElement } from "react";
 
 const StatusBanner = () => {
-  const { status } = useFileStore();
+  const { status, curFileKey, setStatus } = useFileStore();
+  useEffect(() => {
+    if (!curFileKey || status === "READY" || status === "ERROR") return;
+  }, [curFileKey, status, setStatus]);
 
   const statusMessages: Record<StatusType, string | ReactElement> = {
     IDLE: "Please upload the file and wait while we process it. Once it`s ready, you`ll be able to start chatting.",
-    UPLOADING: <Spinner />,
     PROCESSING: <Spinner />,
     READY: "Start a conversation.",
     ERROR: "Something went wrong. Please try again.",
