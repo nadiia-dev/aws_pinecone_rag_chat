@@ -21,7 +21,7 @@ const formSchema = z.object({
 });
 
 const FileInput = () => {
-  const { file, setFile, fileData, setFileData } = useFileStore();
+  const { file, setFile, fileData, setFileData, setStatus } = useFileStore();
   const { email } = useAuthStore();
   const isDisabled = file ? true : false;
 
@@ -63,6 +63,7 @@ const FileInput = () => {
   };
 
   const onSubmit = async () => {
+    setStatus("UPLOADING");
     if (!fileData.presignedUrl || !fileData.key) {
       toast("No presigned URL available. Please select a file first.");
       return;
@@ -85,10 +86,12 @@ const FileInput = () => {
       );
       if (uploadedFile) {
         setFile(uploadedFile);
+        setStatus("PROCESSING");
       }
     } catch (e) {
       if (e instanceof Error) {
         toast.error("Something went wrong during upload.");
+        setStatus("ERROR");
       }
     }
   };

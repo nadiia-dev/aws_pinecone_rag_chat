@@ -11,11 +11,13 @@ import { useFileStore } from "@/store/file";
 import { useAuthStore } from "@/store/auth";
 import { fetchStatus } from "@/api";
 import Message from "./Message";
+import Spinner from "./Spinner";
+import StatusBanner from "./StatusBanner";
 
 const ChatWindow = () => {
   const { logoutUser } = useAuthStore();
   const { messages, addMessage } = useChatStore();
-  const { curFileKey } = useFileStore();
+  const { curFileKey, setStatus } = useFileStore();
   const [enabled, setEnabled] = useState(true);
 
   const { data } = useQuery({
@@ -28,9 +30,10 @@ const ChatWindow = () => {
 
   useEffect(() => {
     if (data && data === "SUCCESS") {
+      setStatus("READY");
       setEnabled(false);
     }
-  }, [data]);
+  }, [data, setStatus]);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -59,12 +62,12 @@ const ChatWindow = () => {
         </Button>
       </header>
       <ScrollArea className="relative grow min-h-0 px-4 pb-4">
-        {messages.length === 0 ? (
-          <p className="text-center text-stone-400 absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2">
-            {isDisabled
-              ? "Please upload the file and wait while we process it. Once it`s ready, you`ll be able to start chatting."
-              : "Start a conversation"}
-          </p>
+        {isDisabled ? (
+          <div className="flex justify-center items-center h-full">
+            <Spinner />
+          </div>
+        ) : messages.length === 0 ? (
+          <StatusBanner />
         ) : (
           messages.map((msg, index) => (
             <Message

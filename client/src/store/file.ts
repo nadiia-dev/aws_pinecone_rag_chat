@@ -9,6 +9,13 @@ type FileDataType = {
   key: string;
 };
 
+export type StatusType =
+  | "IDLE"
+  | "UPLOADING"
+  | "PROCESSING"
+  | "READY"
+  | "ERROR";
+
 type FileStore = {
   file: FileItem | null;
   setFile: (file: FileItem) => void;
@@ -18,6 +25,8 @@ type FileStore = {
   fetchFile: () => Promise<FileItem[] | null>;
   clearFile: (s3Key: string) => Promise<void>;
   loading: boolean;
+  status: StatusType;
+  setStatus: (status: StatusType) => void;
 };
 
 export const useFileStore = create<FileStore>()(
@@ -56,6 +65,8 @@ export const useFileStore = create<FileStore>()(
         set({ file: null, loading: false, curFileKey: "" });
         await deleteFile(s3Key);
       },
+      status: "IDLE" as StatusType,
+      setStatus: (status: StatusType) => set({ status }),
     }),
     {
       name: "fileKey",
